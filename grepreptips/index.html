@@ -277,11 +277,6 @@
 <div style="border:1px solid #ABADB3;padding:5px;padding-bottom:0px;">
 <select id="mlist">
   <option value="0">□ 0</option>
-  <option value="1">□ 1</option>
-  <option value="2">□ 2</option>
-  <option value="3">□ 3</option>
-  <option value="4">□ 4</option>
-  <option value="5">□ 5</option>
 </select>
 <a id="murl" href="#">保存URL</a> <label>
 <input type="checkbox" name="proconly" value="1" onchange="$('.proconly-style').remove(); if($(this).prop('checked')){ $('head').append('<style class=proconly-style>.hide-on-proconly { display:none } </style>'); };update_mlist_url();" />一括処理モード</label>
@@ -566,7 +561,15 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
   }
   
   function update_mlist(id){
-	
+    
+    if(!document.querySelectorAll('#mlist option[value="'+(id+1)+'"]').length){
+      document.querySelector("#mlist").insertAdjacentHTML("beforeend",'<option value="'+(id+1)+'">□ '+(id+1)+'</option>');
+    }
+
+    if(!document.querySelectorAll('#mlist option[value="'+(id+1)+'"]').length){
+      document.querySelector("#mlist").insertAdjacentHTML("beforeend",'<option value="'+(id+1)+'">□ '+(id+1)+'</option>');
+    }
+
     if(typeof(mem[id])=="undefined" || mem[id] == ""){
       modck = "□";
       document.getElementById("mlist").options[id].text = modck + " " + id;
@@ -587,12 +590,13 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
   
 	
   function reflesh_mlist(){
-    update_mlist(0);
-    update_mlist(1);
-    update_mlist(2);
-    update_mlist(3);
-    update_mlist(4);
-    update_mlist(5);
+    if(mem){
+      for(idx in mem){ 
+        update_mlist(parseInt(idx));
+      }
+    }else{
+      update_mlist(0);
+    }
   }
   
   function addline(id,opcd){
