@@ -386,6 +386,8 @@
 <INPUT id="xtoj" type="button" value="XML -> JSON" onclick="xtoj();" onmouseover="withToolTip(this)" />
 <INPUT id="jtox" type="button" value="JSON -> XML" onclick="jtox();" onmouseover="withToolTip(this)" /><br />
 <INPUT id="format_html" type="button" value="HTML整形" onclick="format_html();" onmouseover="withToolTip(this)" />
+<INPUT id="format_js" type="button" value="JavaScript整形" onclick="format_js();" onmouseover="withToolTip(this)" />
+<INPUT id="format_css" type="button" value="CSS整形" onclick="format_css();" onmouseover="withToolTip(this)" />
 <INPUT id="format_sql" type="button" value="SQL整形" onclick="format_sql();" onmouseover="withToolTip(this)" />
 <INPUT id="format_json" type="button" value="JSON整形" onclick="format_json();" onmouseover="withToolTip(this)" /><INPUT id="serialize_json" type="button" value="JSONワンライン化" onclick="serialize_json();" onmouseover="withToolTip(this)" />
 <INPUT id="format_xml" type="button" value="XML整形" onclick="format_xml();" onmouseover="withToolTip(this)" /><INPUT id="serialize_xml" type="button" value="XMLワンライン化" onclick="serialize_xml();" onmouseover="withToolTip(this)" /><br />
@@ -481,6 +483,8 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
     "format_xml();",
     "serialize_xml();",
     "format_html();",
+    "format_js();",
+    "format_css();",
     "encode_uri();",
     "decode_uri();",
     "encode_html();",
@@ -1150,9 +1154,20 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
 
   function format_html(){
 	$("#mode").val(["html"]).change();
-	var formatter = new atl.htm.HtmlFormatter(repbox_get(true));
-	repbox_change(formatter.format());
+	repbox_change(html_beautify(repbox_get(true)));
 	prev_grep = "proc_format_html();";
+  }
+
+  function format_js(){
+	$("#mode").val(["javascript"]).change();
+	repbox_change(js_beautify(repbox_get(true)));
+	prev_grep = "proc_format_js();";
+  }
+
+  function format_css(){
+	$("#mode").val(["css"]).change();
+	repbox_change(css_beautify(repbox_get(true)));
+	prev_grep = "proc_format_css();";
   }
 
   function encode_uri(){
