@@ -76,11 +76,13 @@
         letter-spacing: 1px;
 	font-family: ime_jp_rp, Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace;
   }
+  .show-on-through{ display:none }
 </style>
 </HEAD>
 <BODY bgcolor="#EEEEEE" onload="chmod(1);">
 <h1>GREPREP TIPS 正規表現(g/regular expression/p)GREP置換処理をブラウザで簡単に利用できる、作業効率化ツール</h1>
 <hr /><b>■処理対象：</b>　処理したいテキストを貼り付けます。
+<span class="hide-on-through">
 <INPUT type="button" value="処理前に戻す" onclick="repbox_change(qch_ctl.undo());" id="undobtn" onmouseover="withToolTip(this)" disabled /><INPUT id="cmdclear" type="button" value="クリア" onclick="repbox_change('')" onmouseover="withToolTip(this)">
 <b>言語:</b><select id="mode" onchange="$('#repbox').trigger('ace_setMode',[$(this).val()]);setSetting('mode',$(this).val());">
 <option value="">■ ドキュメント系</option>
@@ -271,15 +273,21 @@
 <option value="twilight">twilight</option>
 <option value="vibrant_ink">vibrant_ink</option>
 </select>
+</span>
+<div class="hide-on-through">
 <TEXTAREA id="repbox" style="width:100%;height:200px;font-size:12px;font-family: monospace;overflow-x:scroll;overflow-y:scroll;">
 </TEXTAREA>
-<br /><span class="hide-on-proconly"><b>■一時記録：</b>　ブラウザに一時的に記録したり、記録したデータを利用して処理を行います。ブラウザを閉じたり、更新すると削除されるので注意。</span>
+</div>
+<textarea class="show-on-through" id="pastebox" placeholder="ここにテキストを張り付けると、処理結果がコピーされます" oninput="repbox_change($('#pastebox').val());$('#pastebox').val('');procrec();" style="height: 1.2em;width: 99%;font-size: 1.2em;line-height: 17px;"></textarea>
+<br />
+<span class="hide-on-proconly"><b>■一時記録：</b>　ブラウザに一時的に記録したり、記録したデータを利用して処理を行います。ブラウザを閉じたり、更新すると削除されるので注意。</span>
 <div style="border:1px solid #ABADB3;padding:5px;padding-bottom:0px;">
 <select id="mlist">
   <option value="0">□ 0</option>
 </select>
 <a id="murl" href="#">保存URL</a> <label>
-<input type="checkbox" name="proconly" value="1" onchange="$('.proconly-style').remove(); if($(this).prop('checked')){ $('head').append('<style class=proconly-style>.hide-on-proconly { display:none } </style>'); };update_mlist_url();" />一括処理モード</label>
+<input type="checkbox" name="proconly" value="1" onchange="$('.proconly-style').remove(); if($(this).prop('checked')){ $('[name=through]').prop('checked',false).change(); $('head').append('<style class=proconly-style>.hide-on-proconly { display:none } </style>'); };update_mlist_url();" />一括処理モード</label>
+<label><input type="checkbox" name="through" value="1" onchange="$('.through-style').remove(); if($(this).prop('checked')){ $('[name=proconly]').prop('checked',false).change(); $('head').append('<style class=through-style>.hide-on-proconly { display:none } .hide-on-through { display:none } .show-on-through { display:block } </style>'); };update_mlist_url();" />スルーモード</label>
 <br />
 <span class="hide-on-proconly">
 <INPUT id="mreg" type="button" value="に記録" onclick="mopr(1);" onmouseover="withToolTip(this)" >
@@ -289,7 +297,7 @@
 <INPUT id="mloopins" type="button" value="繰り返し差込み" onclick="mopr(7);" onmouseover="withToolTip(this)">
 <INPUT id="recrep" type="button" value="に直前の置換・処理を記録" onclick="recrep();" onmouseover="withToolTip(this)">
 </span>
-<INPUT id="procrec" type="button" value="一括処理・コピー" onclick="procrec();" onmouseover="withToolTip(this)">
+<INPUT class="hide-on-through" id="procrec" type="button" value="一括処理・コピー" onclick="procrec();" onmouseover="withToolTip(this)">
 <span class="hide-on-proconly">
 列区切：<INPUT id="sprs" type="text" size="2" value="," /><INPUT type="checkbox" id="tabsp" onclick="tgltab(this)" />TAB
 </span>
@@ -387,6 +395,8 @@
 <INPUT id="jtox" type="button" value="JSON -> XML" onclick="jtox();" onmouseover="withToolTip(this)" /><br />
 <INPUT id="format_html" type="button" value="HTML整形" onclick="format_html();" onmouseover="withToolTip(this)" />
 <INPUT id="format_js" type="button" value="JavaScript整形" onclick="format_js();" onmouseover="withToolTip(this)" />
+<INPUT id="compress_js" type="button" value="JS圧縮"" onclick="compress_js();" onmouseover="withToolTip(this)" />
+<INPUT id="minify_js" type="button" value="JSミニファイ" onclick="minify_js();" onmouseover="withToolTip(this)" />
 <INPUT id="format_css" type="button" value="CSS整形" onclick="format_css();" onmouseover="withToolTip(this)" />
 <INPUT id="format_sql" type="button" value="SQL整形" onclick="format_sql();" onmouseover="withToolTip(this)" />
 <INPUT id="format_json" type="button" value="JSON整形" onclick="format_json();" onmouseover="withToolTip(this)" /><INPUT id="serialize_json" type="button" value="JSONワンライン化" onclick="serialize_json();" onmouseover="withToolTip(this)" />
@@ -428,9 +438,17 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
 <script src="./vendors/js-beautify/js/beautify-css.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="./vendors/js-beautify/js/beautify-html.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="./vendors/vkbeautify/js/vkbeautify.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/thelib.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/sha1.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/md5.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/ymacs-min.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/everything.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/source-map.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/tools.js" type="text/javascript" charset="utf-8"></script>
+<script src="./vendors/uglifyjs/uglify.js" type="text/javascript" charset="utf-8"></script>
 
 <SCRIPT Language="javascript">
-<!--
 
   /**
    * LZString compression library
@@ -484,6 +502,8 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
     "serialize_xml();",
     "format_html();",
     "format_js();",
+    "compress_js();",
+    "minify_js();",
     "format_css();",
     "encode_uri();",
     "decode_uri();",
@@ -589,7 +609,7 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
   }
 
   function update_mlist_url(){
-    $("#murl").attr("href","#"+LZString.compressToEncodedURIComponent(JSON.stringify({"mem":mem,"proconly":$('[name=proconly]').prop('checked')})));
+    $("#murl").attr("href","#"+LZString.compressToEncodedURIComponent(JSON.stringify({"mem":mem,"proconly":$('[name=proconly]').prop('checked'),"through":$('[name=through]').prop('checked')})));
   }
   
 	
@@ -1164,6 +1184,33 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
 	prev_grep = "proc_format_js();";
   }
 
+  function compress_js(){
+	$("#mode").val(["javascript"]).change();
+  ast = UglifyJS.parse(repbox_get(true));
+  ast.figure_out_scope();
+  compressor = UglifyJS.Compressor({});
+  ast = ast.transform(compressor);
+  repbox_change(ast.print_to_string());
+	prev_grep = "proc_compress_js();";
+  }
+
+  function minify_js(){
+	$("#mode").val(["javascript"]).change();
+  ast = UglifyJS.parse(repbox_get(true));
+  // compressor needs figure_out_scope too
+  ast.figure_out_scope();
+  compressor = UglifyJS.Compressor()
+  ast = ast.transform(compressor);
+
+  // need to figure out scope again so mangler works optimally
+  ast.figure_out_scope();
+  ast.compute_char_frequency();
+  ast.mangle_names();
+
+  repbox_change(ast.print_to_string());
+	prev_grep = "proc_minify_js();";
+  }
+
   function format_css(){
 	$("#mode").val(["css"]).change();
 	repbox_change(css_beautify(repbox_get(true)));
@@ -1536,6 +1583,7 @@ function reflectmem(){
 	data = JSON.parse(LZString.decompressFromEncodedURIComponent(mstr));
 	mem = data.mem;
 	if(data.proconly) $("[name=proconly]").prop("checked",data.proconly).change();
+  if(data.through) $("[name=through]").prop("checked",data.through).change();
   	reflesh_mlist();
   }
 }
@@ -1622,7 +1670,6 @@ if(grc = docCookies.getItem("grt_grc")) $("#grc").val([grc]).change();
 if(seq = docCookies.getItem("grt_seq")) $("#seq").val([seq]).change();
 if(tchide = docCookies.getItem("grt_tchide")) $("#tchide").val([tchide]).change();
 
-// -->
 </SCRIPT>
 </BODY>
 </HTML>
