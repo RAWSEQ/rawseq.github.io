@@ -616,6 +616,7 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
   function reflesh_mlist(){
     if(mem){
       for(idx in mem){ 
+        if(!mem.hasOwnProperty(idx)) continue;
         update_mlist(parseInt(idx));
       }
     }else{
@@ -854,6 +855,7 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
     if(document.getElementById("imark").checked) imarkchr = "i";
 
     for(cnt in aSrc){
+      if(!aSrc.hasOwnProperty(cnt)) continue;
       if(eval("aSrc[cnt].match(/"+matchtxt+"/gm"+imarkchr+");")){
         tmp = aSrc[cnt];
         ret = ret + aSrc[cnt] + "\n";
@@ -870,6 +872,7 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
     tgtary.sort();
     tgt = "";
     for(pnt in tgtary){
+      if(!tgtary.hasOwnProperty(pnt)) continue;
       if(tgtary[pnt] != ""){
         tgt = tgt+tgtary[pnt]+"\n";
       }
@@ -1040,6 +1043,7 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
     tmp = null;
     ret = "";
     for(cnt in aSrc){
+      if(!aSrc.hasOwnProperty(cnt)) continue;
       if(tmp == null || tmp != aSrc[cnt]){
         ret = ret+aSrc[cnt]+"\n";
       }
@@ -1067,6 +1071,7 @@ Copyright (C) 2008 RAWSEQ <a href="http://ltside.com">http://ltside.com</a> <a h
     tmp = null;
     ret = "";
     for(cnt in aSrc){
+      if(!aSrc.hasOwnProperty(cnt)) continue;
       if(tmp != null && tmp == aSrc[cnt]){
         dblcnt++;
       }else{
