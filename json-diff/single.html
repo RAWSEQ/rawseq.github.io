@@ -33,6 +33,7 @@ Powerd By <a href="https://github.com/nodeca/js-yaml" target="_blank">js-yaml</a
 	require(['vs/editor/editor.main'], function() {
 
 		editor = monaco.editor.create(document.getElementById('editor'), {
+			folding: true,
 			enableSplitViewResizing: false
 		});
 		lhsModel = monaco.editor.createModel("A", 'yaml');
