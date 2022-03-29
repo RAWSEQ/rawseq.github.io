@@ -166,6 +166,12 @@ Powerd By <a href="https://github.com/nodeca/js-yaml" target="_blank">js-yaml</a
 
 	};
 
+	setInterval(function(){
+		document.querySelectorAll('.pastearea').forEach(function(e){
+			json_modify(e);e.value='';
+		});
+	},500);
+
 	function json_modify(e){
 		if($(e).val()=="") return;
 		if($(e).hasClass("lhs-json")){

@@ -13,6 +13,7 @@
 <input type="button" class="copybtn" value="Copy edited A JSON" onclick="copyBJson()" />
 <span class="linkarea">
 <label><input type="checkbox" id="uesc" />\u encode</label> 
+<label><input type="checkbox" id="sbkn" />Sort by ObjectKeyName(beta) [ArraySort: function rc_sort_rule_array(a, b)]</label>
 <br>
 <a href="./index.html" target="_blank">New DIFF-MERGE</a>／
 <a href="./single.html" target="_blank">New EDITOR</a>
@@ -46,7 +47,7 @@ Powerd By <a href="https://github.com/nodeca/js-yaml" target="_blank">js-yaml</a
 
 	function jtoy(val){
 		try{
-			return jsyaml.dump(JSON.parse(val.replace(/([^\\])\\t/g,"$1<<TAB>>").replace(/([^\\])\\t/g,"$1<<TAB>>").replace(/^\\t/g,"<<TAB>>"))).replace(/<<TAB>>/g,"\t");
+			return jsyaml.dump(r_keysort(JSON.parse(val.replace(/([^\\])\\t/g,"$1<<TAB>>").replace(/([^\\])\\t/g,"$1<<TAB>>").replace(/^\\t/g,"<<TAB>>")))).replace(/<<TAB>>/g,"\t");
 		}catch(e){
 			alert(e.message);
 			$(".pastearea").val("");
@@ -60,6 +61,36 @@ Powerd By <a href="https://github.com/nodeca/js-yaml" target="_blank">js-yaml</a
 			alert(e.message);
 		}
 		prev_grep = "proc_ytoj();";
+	}
+	function r_keysort(val){
+		if(!$("#sbkn").prop("checked")) return val;
+
+		if (Array.isArray(val)) {
+			let ret = [];
+			if (typeof rc_sort_rule_array == 'function') {
+				val.sort(rc_sort_rule_array);
+			}
+			for (let v of val) {
+				ret.push(r_keysort(v));
+			}
+			return ret;
+		} if (val !== null && typeof val === 'object') {
+			let ret = {};
+			var e_val = Object.entries(val);
+			e_val.sort(function(p1, p2){
+				var p1Key = p1[0], p2Key = p2[0];
+				if(p1Key < p2Key){ return -1; }
+				if(p1Key > p2Key){ return 1; }
+				return 0;
+			});
+			val = Object.fromEntries(e_val);
+			for (let v of Object.keys(val)) {
+				ret[v] = r_keysort(val[v]);
+			}
+			return ret;
+		} else {
+			return val;
+		}
 	}
 	function copy_clipboard(val){
 		
@@ -125,6 +156,12 @@ Powerd By <a href="https://github.com/nodeca/js-yaml" target="_blank">js-yaml</a
 
 	};
 
+	setInterval(function(){
+		document.querySelectorAll('.pastearea').forEach(function(e){
+			json_modify(e);e.value='';
+		});
+	},500);
+		
 	function json_modify(e){
 		if($(e).val()=="") return;
 		if($(e).hasClass("lhs-json")){
