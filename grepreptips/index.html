@@ -339,6 +339,8 @@
 </div>
 <div id="mode3">
 <INPUT id="s1" type="text" size="40" />を <INPUT id="cmdlninc" type="button" value="含む行削除" onclick="runcmd('^(?=.*'+prm('s1',true)+').*\\n','');" onmouseover="withToolTip(this)" /><INPUT id="cmdlndec" type="button" value="含まない行削除" onclick="runcmd('^(?!.*'+prm('s1',true)+').*\\n','');" onmouseover="withToolTip(this)" /><br />
+<INPUT id="s23" type="text" size="20" /><INPUT id="cmdlnrm" type="button" value="で始まる行を削除する" onclick="runcmd('^'+prm('s23',true)+'.*\\n','');" onmouseover="withToolTip(this)" /><INPUT id="cmdlnrm" type="button" value="で始まらない行を削除する" onclick="runcmd('^(?!'+prm('s23',true)+').*\\n','');" onmouseover="withToolTip(this)" /><br />
+<INPUT id="s24" type="text" size="20" /><INPUT id="cmdlnrm" type="button" value="で終わる行を削除する" onclick="runcmd('^.*'+prm('s24',true)+'\\n','');" onmouseover="withToolTip(this)" /><INPUT id="cmdlnrm" type="button" value="で終わらない行を削除する" onclick="runcmd('^.*[^('+prm('s24',true)+')]\\n','');" onmouseover="withToolTip(this)" /><br />
 <INPUT id="s21" type="text" size="20" /><INPUT id="cmdlnrm" type="button" value="で始まらない行の直前の改行を削除する" onclick="runcmd('\\n(?!'+prm('s21',true)+')','');" onmouseover="withToolTip(this)" /><INPUT id="cmdlnrm" type="button" value="の直前に改行を加える" onclick="runcmd(prm('s21',true),'\\n'+prm('s21',true));" onmouseover="withToolTip(this)" /><br />
 <INPUT id="cmddlnrm" type="button" value="連続行以外の改行を削除する" onclick="runcmd('\\n([^\\n])','$1');" onmouseover="withToolTip(this)" /><br />
 <INPUT id="cmdlndel" type="button" value="空行削除" onclick="runcmd('^\\n','');" onmouseover="withToolTip(this)" />
